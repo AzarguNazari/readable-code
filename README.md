@@ -1,7 +1,7 @@
 1. Example of builder service
 ```java
 ConvertedDocument convertedPdf = DocumentConverter.from(DocumentType.PNG)
-                                                  .to(DocumentType.Pdf)
+                                                  .to(DocumentType.PDF)
                                                   .convert();
 ```
 
