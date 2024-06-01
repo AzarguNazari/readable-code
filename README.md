@@ -19,7 +19,18 @@ public ResponseEntity<GenericResponse> createBooks(@Valid @RequestBody BookCreat
 
 ```
 
-3. Example of Service in layered-architecture
+3. Example of Domain class in DDD
+```java
+@Builder
+public record BookCreated(
+    BookTitle title,
+    BookAuthor author,
+    BookSize size) implements Domain {
+}
+
+```
+
+3. Example of Service in layered-based architecture
 ```java
 
 // inject bean
@@ -30,5 +41,14 @@ public BookDto createBook(BookDto book) {
   Book createdBookEntity = bookResponsity.save(bookEntity);
   return createdBookEntity.toDto();
 } 
+```
 
+4. Example of BookDto in layered-based architecture
+```java
+@Builder
+public record BookDto(String title, String author, int size) {
+  public Book toEntity() {
+      return BookEntity.builder().title(title).author(author).size(size).build();
+  }
+}
 ```
