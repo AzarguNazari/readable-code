@@ -1,13 +1,16 @@
 1. Example of builder service
 ```java
-ConvertedDocument convertedPdf = DocumentConverter.from(DocumentType.PNG)
+
+public record Document(DocumentType type, byte[] content) {}
+
+Document convertedPdf = DocumentConverter.from(DocumentType.PNG)
                                                   .to(DocumentType.PDF)
                                                   .convert();
 ```
 
+
 2. Example of Rest Controller
 ```java
-
 // inject bean
 private final DomainHandler domainHanlder;
 
@@ -30,7 +33,7 @@ public record BookCreated(
 
 ```
 
-3. Example of Service in layered-based architecture
+4. Example of Service in layered-based architecture
 ```java
 
 // inject bean
@@ -43,7 +46,7 @@ public BookDto createBook(BookDto book) {
 } 
 ```
 
-4. Example of BookDto in layered-based architecture
+5. Example of BookDto in layered-based architecture
 ```java
 @Builder
 public record BookDto(String title, String author, int size) {
