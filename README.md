@@ -81,7 +81,7 @@ public record Book(
 ```java
 Spring Jpa
 
-public interface BookRepository {
+public interface BookRepository implements JpaRepository<Book, Long> {
    List<Book> findAll();
    Optional<Book> findById(Long id);
    List<Book> findAllByTitle(String title);
