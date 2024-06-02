@@ -1,11 +1,13 @@
 1. Example of builder service
 ```java
 
-public record Document(DocumentType type, byte[] content) {}
+public record Document(
+  DocumentType type,
+  byte[] content) {}
 
 Document convertedPdf = DocumentConverter.from(DocumentType.PNG)
-                                                  .to(DocumentType.PDF)
-                                                  .convert();
+                                         .to(DocumentType.PDF)
+                                         .convert();
 ```
 
 
@@ -53,5 +55,23 @@ public record BookDto(String title, String author, int size) {
   public Book toEntity() {
       return BookEntity.builder().title(title).author(author).size(size).build();
   }
+}
+
+@Entity
+@Builder
+public record Book(
+  @Id Long id,
+  String title,
+  String author,
+  int size) {
+
+  public BookDto toDto() {
+    return BookDto.builder()
+           .title(title)
+           .author(author)
+           .size(size)
+           .build();
+  }
+
 }
 ```
