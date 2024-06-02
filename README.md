@@ -63,7 +63,8 @@ public record Book(
   @Id Long id,
   String title,
   String author,
-  int size) {
+  int size,
+  LocalDateTime created) {
 
   public BookDto toDto() {
     return BookDto.builder()
@@ -74,4 +75,32 @@ public record Book(
   }
 
 }
+```
+
+
+```java
+Spring Jpa
+
+public interface BookRepository {
+   List<Book> findAll();
+   Optional<Book> findById(Long id);
+   List<Book> findAllByTitle(String title);
+   List<Book> findAllByTitleAndAuthor(String title, String author);
+   List<Book> findAllByTitleOrAuthor(String title, String author);
+   List<Book> findAllDistinctByTitleAndAuthor(String title, String author);
+   List<Book> findAllCreatedBetween(LocalDateTime start, LocalDateTime end);
+   List<Book> findAllBySizeLessThan(int size);
+   List<Book> findAllBySizeLessThanEqual(int size);
+   List<Book> findAllByCreatedAfter(LocalDateTime date);
+   List<Book> findAllByCreatedBefore(LocalDateTime date);
+   List<Book> findAllByAuthorIsNull();
+   List<Book> findAllByAuthorIsNotNull();
+   List<Book> findAllByAuthorLike(String title);
+   List<Book> findAllByAuthorNotLike(String title);
+   List<Book> findAllByAuthorStartingWith(String starting);
+   List<Book> findAllByAuthorEndingWith(String ending);
+   List<Book> findAllByAuthorContaining(String author);
+   List<Book> findAllByAuthorOrderByCreatedDesc(String created);
+}
+
 ```
