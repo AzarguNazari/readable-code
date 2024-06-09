@@ -106,7 +106,7 @@ public interface BookRepository implements JpaRepository<Book, Long> {
 
 
 
-```
+```java
 Clean Architecture
 
 /infrastructure/jpa/entities
