@@ -3,7 +3,8 @@
 
 public record Document(
   DocumentType type,
-  byte[] content) {}
+  byte[] content
+) {}
 
 Document convertedPdf = DocumentConverter.from(DocumentType.PNG)
                                          .to(DocumentType.PDF)
@@ -13,25 +14,23 @@ Document convertedPdf = DocumentConverter.from(DocumentType.PNG)
 
 2. Example of Rest Controller
 ```java
-// inject bean
-private final DomainHandler domainHanlder;
 
-@PostMapping("/api/books")
-public ResponseEntity<GenericResponse> createBooks(@Valid @RequestBody BookCreated bookCreated) {
-    DomainPrcoessResponse response = domainHandler.handle(bookCreated);
-    return EntityResponseCreator.from(response).create();
-} 
-
-```
-
-3. Example of Domain class in DDD
-```java
 @Builder
 public record BookCreated(
     BookTitle title,
     BookAuthor author,
     BookSize size) implements Domain {
 }
+
+
+// inject bean
+private final DomainHandler domainHanlder;
+
+@PostMapping("/api/books")
+public ResponseEntity<BookDto> createBooks(@Valid @RequestBody BookCreated bookCreated) {
+    BookDto createdBook = domainHandler.handle(bookCreated);
+    return ResponseEntity.ok(createdBook);
+} 
 
 ```
 
@@ -104,3 +103,87 @@ public interface BookRepository implements JpaRepository<Book, Long> {
 }
 
 ```
+
+
+
+```
+Clean Architecture
+
+/infrastructure/jpa/entities
+@Table("books")
+record BookEntity(
+   @Id Long id,
+   String author
+);
+
+/infrastructure/jpa/respositories
+@Respository
+interface BookEntityRepository implements JpaRepository<BookEntity, Long> {}
+
+/infrastructure/adapters
+@Component
+class BookRepositoryImpl implements BookRespository {
+
+  private final BookEntityRepository bookEntityRepository;
+
+  public BookRepositoryImpl(BookEntityRepository bookEntityRepository) {
+    this.bookEntityRepository = bookEntityRepository;
+  }
+
+  @Override
+  void save(Book book) {
+     BookEntity bookEntity = book.toEntity();
+     bookEntityRepository.save(bookEntity);
+  }
+
+  @Override
+  List<Book> findAll() {
+    List<BookEntity> bookEntities = bookEntityRepository.findAll();
+    return bookEntities.map(bookEntity::toDto).toList();
+  }
+}
+
+/adapters/services/BookQueryServiceImpl.java
+@Service
+class BookQueryServiceImpl implements BookQueryService {
+    // overrides and implements the methods
+}
+
+/adapters/handlers/BookCreatedHandler.java
+@Component
+class BookCreatedHandler implements DomainHandler<BookCreated> {
+
+   DomainResponse handle(BookCreated bookCreated) {
+      // handles the book created domain event
+   }
+
+   @Override
+   DomainResponse verify(BookCreated bookCreted) {
+      // verify the domain here
+  }
+}
+
+/core/enitities/book.java
+record Book(
+  String author
+) { }
+
+/core/respositories/BookRespository.java
+interface BookRespository {
+  void save(Book book);
+  List<Book> findAll();
+}
+
+/core/services/BookQueryService.java
+interface BookQueryService {
+    List<Book> findAll();
+    List<Book> findAllBookFor(BookTitle bookTitle);
+}
+
+```
+
+
+
+
+
+
